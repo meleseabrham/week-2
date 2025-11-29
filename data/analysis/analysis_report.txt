@@ -1,0 +1,46 @@
+============================================================
+BANK REVIEW ANALYSIS REPORT
+============================================================
+
+OVERALL SENTIMENT DISTRIBUTION:
+- Positive: 52.8%
+- Neutral: 38.1%
+- Negative: 9.1%
+
+============================================================
+BANK: BANK OF ABYSSINIA
+============================================================
+
+SENTIMENT:
+- Positive: 43.2%
+- Neutral: 43.2%
+- Negative: 13.5%
+
+TOP THEMES:
+- User Interface: 134 mentions
+- Performance: 12 mentions
+
+============================================================
+BANK: COMMERCIAL BANK OF ETHIOPIA
+============================================================
+
+SENTIMENT:
+- Positive: 55.8%
+- Neutral: 39.0%
+- Negative: 5.2%
+
+TOP THEMES:
+- User Interface: 122 mentions
+
+============================================================
+BANK: DASHEN BANK
+============================================================
+
+SENTIMENT:
+- Positive: 59.5%
+- Neutral: 32.0%
+- Negative: 8.5%
+
+TOP THEMES:
+- User Interface: 167 mentions
+- Performance: 34 mentions
