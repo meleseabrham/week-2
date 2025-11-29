@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # In database.py, update the first line to include DateTime:
 from sqlalchemy import create_engine, Column, Integer, String, Float, Date, DateTime, Text, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
@@ -9,30 +8,13 @@ from dotenv import load_dotenv
 # Add at the top of database.py
 import pandas as pd
 import sqlalchemy
-=======
-from sqlalchemy import create_engine, Column, Integer, String, Float, Date, Text, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
-import pandas as pd
-from pathlib import Path
-import os
-from dotenv import load_dotenv
->>>>>>> ddc2153 (Initial project setup and web scraper implementation)
 
 # Load environment variables
 load_dotenv()
 
-<<<<<<< HEAD
 # Database connection string for SQL Server
 connection_string = f"mssql+pyodbc://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}?driver=ODBC+Driver+17+for+SQL+Server"
 engine = create_engine(connection_string)
-=======
-# Database connection string
-DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://postgres:postgres@localhost:5432/fintech_reviews')
-
-# Create SQLAlchemy engine
-engine = create_engine(DATABASE_URL)
->>>>>>> ddc2153 (Initial project setup and web scraper implementation)
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
 
@@ -42,12 +24,8 @@ class Bank(Base):
     __tablename__ = 'banks'
     
     id = Column(Integer, primary_key=True)
-<<<<<<< HEAD
     code = Column(String(10), unique=True, nullable=False)  # e.g., 'CBE'
     name = Column(String(100), nullable=False)  # Full bank name
-=======
-    name = Column(String(100), unique=True, nullable=False)
->>>>>>> ddc2153 (Initial project setup and web scraper implementation)
     app_name = Column(String(100))
     app_id = Column(String(100))
     
@@ -58,7 +36,6 @@ class Review(Base):
     __tablename__ = 'reviews'
     
     id = Column(Integer, primary_key=True)
-<<<<<<< HEAD
     review_id = Column(String(100), unique=True, nullable=False)  # Google Play review ID
     content = Column(Text)  # review_text
     rating = Column(Integer)
@@ -197,41 +174,10 @@ def save_reviews_to_database(reviews_data, bank_code, bank_name, app_id):
                 name=bank_name,
                 app_name=f"{bank_name} Mobile",
                 app_id=app_id
-=======
-    content = Column(Text)
-    rating = Column(Integer)
-    date = Column(Date)
-    sentiment = Column(String(20))
-    cleaned_text = Column(Text)
-    source = Column(String(50))
-    bank_id = Column(Integer, ForeignKey('banks.id'))
-    
-    bank = relationship("Bank", back_populates="reviews")
-
-def init_db():
-    """Initialize the database by creating all tables."""
-    Base.metadata.create_all(engine)
-    print("Database initialized successfully!")
-
-def save_to_database(df, bank_name):
-    """Save reviews to the database."""
-    # Create a new session
-    session = Session()
-    
-    try:
-        # Check if bank exists, if not create it
-        bank = session.query(Bank).filter_by(name=bank_name).first()
-        if not bank:
-            bank = Bank(
-                name=bank_name,
-                app_name=f"{bank_name.capitalize()} Mobile",
-                app_id=f"com.{bank_name.lower()}.mobile"
->>>>>>> ddc2153 (Initial project setup and web scraper implementation)
             )
             session.add(bank)
             session.commit()
         
-<<<<<<< HEAD
         # Process reviews
         for review_data in reviews_data:
             # Check if review exists
@@ -286,26 +232,6 @@ def save_to_database(df, bank_name):
             print("No new or updated reviews to save.")
         
         return new_reviews, updated_reviews
-=======
-        # Prepare reviews data
-        reviews_data = []
-        for _, row in df.iterrows():
-            review = Review(
-                content=row.get('content', ''),
-                rating=row.get('score', row.get('rating', 0)),
-                date=row.get('date'),
-                sentiment=row.get('sentiment', 'neutral'),
-                cleaned_text=row.get('cleaned_text', ''),
-                source=row.get('source', 'Google Play Store'),
-                bank_id=bank.id
-            )
-            reviews_data.append(review)
-        
-        # Add all reviews
-        session.bulk_save_objects(reviews_data)
-        session.commit()
-        print(f"Successfully saved {len(reviews_data)} reviews for {bank_name} to the database.")
->>>>>>> ddc2153 (Initial project setup and web scraper implementation)
         
     except Exception as e:
         session.rollback()
@@ -314,7 +240,6 @@ def save_to_database(df, bank_name):
     finally:
         session.close()
 
-<<<<<<< HEAD
 def load_from_database(bank_name=None, include_sentiment=True):
     """Load reviews from the database.
     
@@ -352,25 +277,12 @@ def load_from_database(bank_name=None, include_sentiment=True):
         
         return df
         
-=======
-def load_from_database(bank_name=None):
-    """Load reviews from the database."""
-    session = Session()
-    try:
-        query = session.query(Review)
-        if bank_name:
-            query = query.join(Bank).filter(Bank.name == bank_name)
-        
-        df = pd.read_sql(query.statement, session.bind)
-        return df
->>>>>>> ddc2153 (Initial project setup and web scraper implementation)
     except Exception as e:
         print(f"Error loading from database: {e}")
         return pd.DataFrame()
     finally:
         session.close()
 
-<<<<<<< HEAD
 def export_to_csv(filename='data/processed/bank_reviews.csv', bank_name=None):
     """Export reviews to a CSV file with sentiment analysis.
     
@@ -497,8 +409,3 @@ if __name__ == "__main__":
             session.close()
     else:
         parser.print_help()
-=======
-if __name__ == "__main__":
-    # Initialize the database
-    init_db()
->>>>>>> ddc2153 (Initial project setup and web scraper implementation)
