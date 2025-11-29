@@ -1,0 +1,66 @@
+name: Link Validation
+
+on:
+  push:
+    branches: [ main, task-* ]
+  pull_request:
+    branches: [ main, task-* ]
+
+jobs:
+  link-validation:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install LinkChecker
+      run: pip install linkchecker
+
+    - name: Create config file
+      run: |
+        cat > .linkcheckerrc << 'EOL'
+        [checking]
+        threads=10
+        timeout=30
+        aborttimeout=30
+        sslverify=true
+        
+        [filtering]
+        ignorewarnings=url_has_no_scheme,url_with_underscore,url_with_brackets
+        ignoreurl=.*?github\.com/.*/issues/\d+
+        ignoreurl=^http://localhost.*
+        ignoreurl=^http://127.0.0.1.*
+        ignoreurl=^mailto:.*
+        ignoreurl=^tel:.*
+        ignoreurl=^#.*
+        ignoreurl=.*?example\.com.*
+        EOL
+
+    - name: Run LinkChecker
+      continue-on-error: false
+      run: |
+        # Check Markdown and HTML files, excluding venv and .git directories
+        find . -type f \( -name "*.md" -o -name "*.html" \) \
+          -not -path "*/venv/*" \
+          -not -path "*/.git/*" \
+          -not -path "*/node_modules/*" | \
+        xargs linkchecker --config=.linkcheckerrc --file-output=linkchecker-out.txt/ --verbose
+        
+        # Check if the output file contains errors
+        if [ -s linkchecker-out.txt ]; then
+          echo "::error::Broken links found. Check the linkchecker-out.txt artifact for details."
+          exit 1
+        fi
+
+    - name: Upload link check results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: linkchecker-results
+        path: linkchecker-out.txt
+        retention-days: 5
