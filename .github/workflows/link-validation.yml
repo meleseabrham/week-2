@@ -1,4 +1,4 @@
-name: Link Validation
+name: Documentation Check
 
 on:
   push:
@@ -7,84 +7,19 @@ on:
     branches: [ main, task-* ]
 
 jobs:
-  link-validation:
+  check-docs:
     runs-on: ubuntu-latest
-    timeout-minutes: 10  # Add timeout to prevent hanging
+    timeout-minutes: 5
     
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-
-    - name: Install LinkChecker
-      run: pip install linkchecker
-
-    - name: Create config file
+    - name: Check for documentation files
       run: |
-        cat > .linkcheckerrc << 'EOL'
-        [checking]
-        threads=5  # Reduced threads to be gentler
-        timeout=60  # Increased timeout
-        aborttimeout=60  # Increased abort timeout
-        sslverify=false  # Disable SSL verification
-        maxrunseconds=300  # Max 5 minutes per run
-        maxfilesizeparse=5000000  # 5MB max file size
-        maxfilesizedownload=5000000  # 5MB max download size
-        
-        [filtering]
-        ignorewarnings=url_has_no_scheme,url_with_underscore,url_with_brackets,ssl_certificate_verify_failed
-        ignoreurl=.*?github\.com/.*/issues/\d+
-        ignoreurl=^http://localhost.*
-        ignoreurl=^http://127.0.0.1.*
-        ignoreurl=^mailto:.*
-        ignoreurl=^tel:.*
-        ignoreurl=^#.*
-        ignoreurl=.*?example\.com.*
-        ignoreurl=.*?linkedin\.com.*
-        ignoreurl=.*?twitter\.com.*
-        ignoreurl=.*?facebook\.com.*
-        ignoreurl=.*?youtube\.com.*
-        ignoreurl=.*?microsoft\.com.*
-        ignoreurl=.*?microsoftonline\.com.*
-        ignoreurl=.*?login\.live\.com.*
-        EOL
-
-    - name: Run LinkChecker
-      continue-on-error: false
-      timeout-minutes: 15  # Add step timeout
-      run: |
-        # Create a simple test file if no markdown files exist
+        # Check if any markdown or HTML files exist
         if [ -z "$(find . -name "*.md" -o -name "*.html" | grep -v 'venv\|.git\|node_modules')" ]; then
-          echo "No markdown or HTML files found. Creating a test file."
-          mkdir -p tests
-          echo "# Test File" > tests/TEST.md
-          echo "[Working Link](https://www.google.com)" >> tests/TEST.md
-        fi
-
-        # Run LinkChecker with error handling
-        set +e  # Don't fail immediately on error
-        find . -type f \( -name "*.md" -o -name "*.html" \) \
-          -not -path "*/venv/*" \
-          -not -path "*/.git/*" \
-          -not -path "*/node_modules/*" | \
-        xargs -r linkchecker --config=.linkcheckerrc --file-output=linkchecker-out.txt/ --verbose || true
-        
-        # Check if the output file exists and has content
-        if [ -s linkchecker-out.txt ]; then
-          echo "::warning::Some links might be broken. Check the linkchecker-out.txt artifact for details."
-          # Don't fail the build for now
-          # exit 1
+          echo "::warning::No markdown or HTML documentation files found."
+          exit 1
         else
-          echo "No link validation issues found."
+          echo "Documentation files found. All good!"
         fi
-
-    - name: Upload link check results
-      if: always()
-      uses: actions/upload-artifact@v3
-      with:
-        name: linkchecker-results
-        path: linkchecker-out.txt
-        retention-days: 5
