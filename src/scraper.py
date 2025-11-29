@@ -229,4 +229,8 @@ def main():
 
 
 if __name__ == "__main__":
+<<<<<<< HEAD
     reviews_df = main()
+=======
+    reviews_df = main()
+>>>>>>> temp-branch
