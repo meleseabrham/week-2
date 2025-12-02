@@ -1,0 +1,38 @@
+================================================================================
+BANKS REVIEW INSIGHTS & RECOMMENDATIONS
+================================================================================
+Generated: 2025-12-02 15:32:42.363089
+
+BANK: BOA  (reviews: 400)
+  Drivers (evidence - top positive keywords):
+   - best (31), nice (17), boa (14), please (12), when (10), banking (10)
+  Pain points (evidence - top negative keywords):
+   - worst (19), ever (10), bad (8), slow (8), banking (7), experience (7)
+  Recommendations:
+   - Improve stability: add crash telemetry and prioritize fixes for top crash paths.
+   - Optimize performance (network payloads, caching) and add progress indicators for slow paths.
+
+BANK: CBE  (reviews: 400)
+  Drivers (evidence - top positive keywords):
+   - best (27), nice (23), application (13), cbe (13), it's (11), excellent (9)
+  Pain points (evidence - top negative keywords):
+   - bad (4), other (3), what (3), why (2), can't (2), it's (2)
+  Recommendations:
+   - Monitor reviews + telemetry for targeted improvements; run small UX tests.
+
+BANK: DASHEN  (reviews: 400)
+  Drivers (evidence - top positive keywords):
+   - best (36), dashen (34), banking (28), super (25), nice (22), easy (20)
+  Pain points (evidence - top negative keywords):
+   - worst (10), slow (8), it's (7), ever (7), even (5), working (4)
+  Recommendations:
+   - Improve stability: add crash telemetry and prioritize fixes for top crash paths.
+   - Optimize performance (network payloads, caching) and add progress indicators for slow paths.
+
+Saved plots:
+ - data\analysis\plots\sentiment_trend_by_bank.png
+ - data\analysis\plots\rating_distribution_by_bank.png
+ - data\analysis\plots\top_keywords_by_bank.png
+ - data\analysis\plots\wordcloud_BOA.png
+ - data\analysis\plots\wordcloud_CBE.png
+ - data\analysis\plots\wordcloud_DASHEN.png
