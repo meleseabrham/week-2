@@ -17,6 +17,7 @@ from datetime import datetime
 import time
 from tqdm import tqdm
 from .config import APP_IDS, BANK_NAMES, SCRAPING_CONFIG, DATA_PATHS
+from .database import save_reviews_to_database
 
 
 class PlayStoreScraper:
@@ -174,18 +175,32 @@ class PlayStoreScraper:
             os.makedirs(DATA_PATHS['raw'], exist_ok=True)
             df.to_csv(DATA_PATHS['raw_reviews'], index=False)
 
+            # Save to database
+            print("\nSaving reviews to database...")
+            for bank_code in self.bank_names.keys():
+                bank_reviews = [r for r in all_reviews if r['bank_code'] == bank_code]
+                if bank_reviews:
+                    saved, updated = save_reviews_to_database(
+                        reviews_data=bank_reviews,
+                        bank_code=bank_code,
+                        bank_name=self.bank_names[bank_code],
+                        app_id=self.app_ids[bank_code]
+                    )
+                    print(f"  {self.bank_names[bank_code]}: {saved} new, {updated} updated reviews")
+
             print("\n" + "=" * 60)
             print("Scraping Complete!")
             print("=" * 60)
             print(f"\nTotal reviews collected: {len(df)}")
             
             # Print stats per bank
-            print(f"Reviews per bank:")
+            print(f"\nReviews per bank:")
             for bank_code in self.bank_names.keys():
                 count = len(df[df['bank_code'] == bank_code])
                 print(f"  {self.bank_names[bank_code]}: {count}")
 
             print(f"\nData saved to: {DATA_PATHS['raw_reviews']}")
+            print("Data saved to database.")
 
             return df
         else:

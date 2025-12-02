@@ -278,10 +278,10 @@ def load_from_database(bank_name=None, include_sentiment=True):
         return df
         
     except Exception as e:
-        print(f"Error loading from database: {e}")
+        print(f"Error loading from database: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return pd.DataFrame()
-    finally:
-        session.close()
 
 def export_to_csv(filename='data/processed/bank_reviews.csv', bank_name=None):
     """Export reviews to a CSV file with sentiment analysis.
